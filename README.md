@@ -61,7 +61,7 @@ graph TD
 | **Shared Lib**    | `@aaticketsaa/common` | Reusable components              |
 
 <a id="3-core-workflows"></a>
-🔄 Core Event Flow
+## 🔄 Core Event Flow
 
 ```mermaid
 sequenceDiagram
