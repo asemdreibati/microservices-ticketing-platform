@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-const UseRequest = ({ url, method, body, onSuccess }) => {
+const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null);
 
   const doRequest = async (props = {}) => {
@@ -15,7 +15,7 @@ const UseRequest = ({ url, method, body, onSuccess }) => {
 
       return response.data;
     } catch (err) {
-      setErrors(
+      const errorContent = err?.response?.data?.errors ? (
         <div className="alert alert-danger">
           <h4>Ooops....</h4>
           <ul className="my-0">
@@ -24,10 +24,20 @@ const UseRequest = ({ url, method, body, onSuccess }) => {
             ))}
           </ul>
         </div>
+      ) : (
+        <div className="alert alert-danger">
+          <h4>Ooops....</h4>
+          <ul className="my-0">
+            <li>An unexpected error occurred</li>
+          </ul>
+        </div>
       );
+
+      setErrors(errorContent);
     }
   };
 
   return { doRequest, errors };
 };
-export default UseRequest;
+
+export default useRequest;
