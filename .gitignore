@@ -1,0 +1,6 @@
+node_modules
+.DS_Store
+common/
+
+# Ignore all workflow files starting with 'deploy'
+.github/workflows/deploy*
