@@ -1,13 +1,40 @@
-name: tests-auth
+name: Auth Service Tests
 
 on:
   pull_request:
     paths:
       - "auth/**"
+    branches: [master] # Explicitly specify target branch
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # Prevent long-running jobs
+    defaults:
+      run:
+        working-directory: auth # Better than using cd
+
     steps:
-      - uses: actions/checkout@v2
-      - run: cd auth && npm install && npm run test:ci
+      - name: Checkout code
+        uses: actions/checkout@v4 # Updated from v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20" # Specify your Node version
+          cache: "npm" # Automatic dependency caching
+
+      - name: Install dependencies
+        run: npm ci # More reliable than npm install
+
+      - name: Run tests
+        run: npm run test:ci
+
+      - name: Upload test results (optional)
+        if: always() # Upload even if tests fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: |
+            auth/test-results/**/*
+            auth/coverage/**/*
