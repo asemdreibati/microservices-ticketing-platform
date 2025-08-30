@@ -1,13 +1,29 @@
 import axios from "axios";
 import { useState } from "react";
 
+const constructUrlWithQueryParams = (url, params) => {
+  let paramsStr = "";
+  Object.keys(params).forEach((key, index) => {
+    if (index == 0) paramsStr += "?";
+    paramsStr += `${key}=${params[key]}`;
+    if (index < params.length - 1) paramsStr += "&";
+  });
+
+  return url + paramsStr;
+};
+
 const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null);
 
-  const doRequest = async (props = {}) => {
+  const doRequest = async (props = {}, params = {}) => {
+    const modifiedUrl = constructUrlWithQueryParams(url, params);
+
     try {
       setErrors(null);
-      const response = await axios[method](url, { ...body, ...props });
+      const response = await axios[method](modifiedUrl, {
+        ...body,
+        ...props,
+      });
 
       if (onSuccess) {
         onSuccess(response.data);
@@ -22,6 +38,7 @@ const useRequest = ({ url, method, body, onSuccess }) => {
             {err.response.data.errors.map((err) => (
               <li key={err.message}>{err.message}</li>
             ))}
+            {err.response.data.message && <li>{err.response.data.message}</li>}
           </ul>
         </div>
       ) : (
