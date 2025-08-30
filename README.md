@@ -6,10 +6,11 @@
 2. [Technical Stack](#2-technical-stack)
 3. [Core Workflows](#3-core-workflows)
 4. [Folder Structure Of Shared Library](#4-shared-library)
-5. [Event Specifications](#5-event-specifications)
-6. [Key Architecture Features](#6-key-architecture-features)
-7. [Service Responsibilities](#7-service-responsibilities)
-8. [CI Pipeline](#8-ci-pipeline)
+5. [Authentication Via Magic Links](#5-authentication-via-magic-links)
+6. [Event Specifications](#6-event-specifications)
+7. [Key Architecture Features](#7-key-architecture-features)
+8. [Service Responsibilities](#8-service-responsibilities)
+9. [CI Pipeline](#9-ci-pipeline)
 
 <a id="1-architecture-overview"></a>
 
@@ -43,24 +44,32 @@ graph TD
     F --> M[Stripe API]
     L --> N[(Redis)]
 
-    style K fill:#2d3748,stroke:#4a5568
-    style N fill:#742a2a,stroke:#4a5568
+    %% Magic Link Flow
+    C --> O[Email Service<br/>Nodemailer]
+    O --> P[Gmail/SMTP]
+
+    style K fill:red,stroke:#4a5568
+    style N fill:#798,stroke:#4a5568
+    style O fill:#398,stroke:#4a5568
 ```
 
 <a id="2-technical-stack"></a>
 
 ## 🛠️ Technical Stack
 
-| Component         | Technology            | Purpose                          |
-| ----------------- | --------------------- | -------------------------------- |
-| **Backend**       | Node.js + TypeScript  | Service implementation           |
-| **Event Bus**     | NATS Streaming        | Service-to-service communication |
-| **Database**      | MongoDB               | Persistent data storage          |
-| **Frontend**      | Next.js               | User interface                   |
-| **Orchestration** | Kubernetes + Skaffold | Container management             |
-| **Shared Lib**    | `@aaticketsaa/common` | Reusable components              |
+| Component          | Technology            | Purpose                          |
+| ------------------ | --------------------- | -------------------------------- |
+| **Backend**        | Node.js + TypeScript  | Service implementation           |
+| **Event Bus**      | NATS Streaming        | Service-to-service communication |
+| **Database**       | MongoDB               | Persistent data storage          |
+| **Frontend**       | Next.js               | User interface                   |
+| **Authentication** | JWT + Magic Links     | Passwordless authentication      |
+| **Email Service**  | Nodemailer + Gmail    | Magic link delivery              |
+| **Orchestration**  | Kubernetes + Skaffold | Container management             |
+| **Shared Lib**     | `@aaticketsaa/common` | Reusable components              |
 
 <a id="3-core-workflows"></a>
+
 ## 🔄 Core Event Flow
 
 ```mermaid
@@ -70,13 +79,23 @@ sequenceDiagram
     end
 
     box Backend Services
+        participant Auth as AuthService
         participant TS as TicketService
         participant OS as OrderService
         participant ES as ExpirationService
         participant PS as PaymentService
     end
 
-    %% 1. Ticket Creation
+    %% 0. Authentication Flow
+    Client->>Auth: POST /signup-pl {email}
+    Auth->>Auth: Generate Magic Link Token
+    Auth->>Email: Send Magic Link
+    Email-->>Client: Magic Link Email
+    Client->>Auth: GET /verify?token=...
+    Auth->>Auth: Validate Token
+    Auth->>Client: JWT Token
+
+    %% 1. Ticket Creation (Authenticated)
     Client->>TS: POST /tickets {title,price}
     TS->>TS: DB: Create(ticket)
     TS->>NATS: ticket:created{ticketId,version,title,price}
@@ -137,8 +156,10 @@ Shared library for Ticketing Microservices System containing events, errors, and
 │ │ ├── database-connection-error.ts
 │ │ ├── not-authorized-error.ts
 │ │ ├── not-found-error.ts
-│ │ └── request-validation-error.ts
-│ │
+│ │ ├── request-validation-error.ts
+│ │ ├── internal-server-error.ts
+│ │ └── duplicate-resource-creation.ts
+| |
 │ ├── events/ # NATS event system
 │ │ ├── types/
 │ │ │ └── order-status.ts
@@ -164,7 +185,42 @@ Shared library for Ticketing Microservices System containing events, errors, and
 └── .gitignore
 ```
 
-<a id="5-event-specifications"></a>
+<a id="5-authentication-via-magic-links"></a>
+
+## 🔐 Authentication via Magic Links
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as Auth Service
+    participant E as Email Service
+    participant DB as Database
+
+    C->>A: POST /signup-pl {email}
+    A->>DB: Check if user exists
+    DB-->>A: User data
+
+    alt New User
+        A->>DB: Create user with magic token
+    else Existing User
+        A->>DB: Update magic token
+    end
+
+    A->>A: Generate secure token (32 chars)
+    A->>A: Set expiration (1 min)
+    A->>E: Send magic link email
+    E->>C: Email with magic link
+
+    C->>A: GET /verify-magic-links?token=...
+    A->>DB: Validate token & expiration
+    DB-->>A: Valid user data
+
+    A->>A: Generate JWT
+    A->>C: Set cookie & redirect
+    A->>DB: Invalidate magic token
+```
+
+<a id="6-event-specifications"></a>
 
 ## 📜 Event Specifications
 
@@ -177,7 +233,7 @@ Shared library for Ticketing Microservices System containing events, errors, and
 | `payment:created`     | PaymentService    | OrderService                                     | `{orderId, chargeId}`                 |
 | `expiration:complete` | ExpirationService | OrderService                                     | `{orderId}`                           |
 
-<a id="6-key-architecture-features"></a>
+<a id="7-key-architecture-features"></a>
 
 ## 🧩 Key Architecture Features
 
@@ -219,7 +275,7 @@ journey
       Release Ticket: 3: TicketService
 ```
 
-<a id="7-service-responsibilities"></a>
+<a id="8-service-responsibilities"></a>
 
 ### 🏗 Service Responsibilities
 
@@ -258,7 +314,7 @@ flowchart LR
     B --> C[Emit complete]
 ```
 
-<a id="8-ci-pipeline"></a>
+<a id="9-ci-pipeline"></a>
 
 ## 🧪 CI Pipeline Flow
 

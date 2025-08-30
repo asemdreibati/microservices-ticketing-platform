@@ -23,6 +23,12 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: EMAIL_FROM
+              value: "abodaraaali50@gmail.com"
+            - name: EMAIL_PASS
+              value: "ghxx hjue tkkj glgj"
+            - name: FRONTEND_BASE_URL
+              value: "https://ticketing.dev/auth/verification-redirection"
 ---
 apiVersion: v1
 kind: Service
