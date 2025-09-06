@@ -189,7 +189,7 @@ router.get(
   "/api/users/verify-magic-links",
   async (req: Request, res: Response) => {
     const { token } = req.query;
-
+    console.log("---------token:", token);
     if (!token || typeof token !== "string") {
       throw new BadRequestError("Verification token is required");
     }

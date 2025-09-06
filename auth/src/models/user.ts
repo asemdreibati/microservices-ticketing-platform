@@ -10,6 +10,9 @@ interface UserAttrs {
   magicLinkExpires?: Date;
   magicLinkUsed?: boolean;
   verified?: boolean;
+  tempTwoFactorSecret?: string;
+  twoFactorSecret?: string;
+  twoFactorEnabled?: boolean;
 }
 
 // An interface that describes the properties
@@ -27,6 +30,10 @@ interface UserDoc extends mongoose.Document {
   magicLinkExpires?: Date;
   magicLinkUsed?: boolean;
   verified?: boolean;
+
+  tempTwoFactorSecret?: string;
+  twoFactorSecret?: string;
+  twoFactorEnabled?: boolean;
 }
 
 const userSchema = new mongoose.Schema(
@@ -52,6 +59,18 @@ const userSchema = new mongoose.Schema(
       required: false,
     },
     verified: {
+      type: Boolean,
+      required: false,
+    },
+    tempTwoFactorSecret: {
+      type: String,
+      required: false,
+    },
+    twoFactorSecret: {
+      type: String,
+      required: false,
+    },
+    twoFactorEnabled: {
       type: Boolean,
       required: false,
     },
