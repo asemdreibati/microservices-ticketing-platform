@@ -4,14 +4,16 @@ import jwt from "jsonwebtoken";
 import { BadRequestError } from "@aaticketsaa/common";
 
 export const setup2FA = async (req: Request, res: Response) => {
-  const userId = (req as any).userId;
+  const userId = (req.currentUser as any).id;
+  //const userId = (req as any).userId;
 
+  console.log(userId, "req.currentUser");
   const { qrCode } = await twoFactorService.generate2FASetup(userId);
   res.json({ qrCode });
 };
 
 export const confirm2FASetup = async (req: Request, res: Response) => {
-  const userId = (req as any).userId;
+  const userId = (req.currentUser as any).id;
   const { token: PIN_token } = req.body;
 
   await twoFactorService.verify2FASetup(userId, PIN_token);

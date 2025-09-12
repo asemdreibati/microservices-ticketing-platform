@@ -41,12 +41,9 @@ const TwoFactorPage = () => {
           placeholder="Enter 2FA code"
           value={token}
           onChange={(e) => setToken(e.target.value)}
-          className="w-full px-3 py-2 border rounded mb-4"
+          className="w-full form-control"
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-        >
+        <button type="submit" className="w-full btn btn-dark">
           Verify
         </button>
       </form>

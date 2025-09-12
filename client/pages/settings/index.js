@@ -2,20 +2,13 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import useRequest from "../../hooks/use-request";
 
-const SettingsPage = () => {
+const SettingsPage = ({ currentUser }) => {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(null);
   const [qrCode, setQrCode] = useState(null);
   const [setupToken, setSetupToken] = useState("");
   const [message, setMessage] = useState("");
   const [loadingSetup, setLoadingSetup] = useState(false);
-  const { doRequest: meFn, meError } = useRequest({
-    url: "/api/users/me",
-    method: "get",
-    onSuccess: ({ currentUser }) => {
-      console.log("currentUser", currentUser);
-      setTwoFactorEnabled(currentUser?.twoFactorEnabled);
-    },
-  });
+
   const { doRequest: twoFaSetupRequestFn, twoFaSetupRequestError } = useRequest(
     {
       url: "/api/users/2fa/setup",
@@ -43,6 +36,14 @@ const SettingsPage = () => {
       setMessage("2FA disabled");
     },
   });
+  const { doRequest: meFn, meError } = useRequest({
+    url: "/api/users/me",
+    method: "get",
+    onSuccess: ({ currentUser }) => {
+      console.log("currentUser", currentUser);
+      setTwoFactorEnabled(currentUser?.twoFactorEnabled);
+    },
+  });
   useEffect(() => {
     meFn();
   }, []);
@@ -68,16 +69,13 @@ const SettingsPage = () => {
       <h1 className="text-xl font-semibold mb-4">Settings</h1>
 
       {verifySetupErrors}
-      {meError}
       {twoFaSetupRequestError}
       {disable2FAErrors}
+      {meError}
       {twoFactorEnabled ? (
         <div>
           <p className="mb-4 text-green-700">2FA is enabled ✅</p>
-          <button
-            onClick={disable2FA}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
+          <button onClick={disable2FA} className="btn btn-danger">
             Disable 2FA
           </button>
         </div>
@@ -100,17 +98,14 @@ const SettingsPage = () => {
                 onChange={(e) => setSetupToken(e.target.value)}
                 className="w-full px-3 py-2 border rounded mb-2"
               />
-              <button
-                onClick={verifySetup}
-                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
-              >
+              <button onClick={verifySetup} className="btn btn-success w-full">
                 Verify and Enable 2FA
               </button>
             </div>
           ) : (
             <button
               onClick={startSetup}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="btn btn-warning"
               disabled={loadingSetup}
             >
               {loadingSetup ? "Loading..." : "Enable 2FA"}

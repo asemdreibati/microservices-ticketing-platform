@@ -4,6 +4,7 @@ const Header = ({ currentUser }) => {
   const links = [
     !currentUser && { label: "Sign Up", href: "/auth/signup" },
     !currentUser && { label: "Sign In", href: "/auth/signin" },
+    currentUser && { label: "Settings", href: "/settings" },
     currentUser && { label: "Sell Tickets", href: "/tickets/new" },
     currentUser && { label: "My Orders", href: "/orders" },
     currentUser && { label: "Sign Out", href: "/auth/signout" },
@@ -13,22 +14,49 @@ const Header = ({ currentUser }) => {
       return (
         <li key={href} className="nav-item">
           <Link href={href}>
-            <a className="nav-link">{label}</a>
+            <a
+              className={
+                "ms-2 " +
+                (label == "Sign Up"
+                  ? "btn btn-dark text-white"
+                  : label == "Sign In"
+                  ? "btn btn-outline-dark"
+                  : "nav-link")
+              }
+            >
+              {label}
+            </a>
           </Link>
         </li>
       );
     });
 
   return (
-    <nav className="navbar navbar-light bg-light">
-      <Link href="/">
-        <a className="navbar-brand">Ticketing App</a>
-      </Link>
+    <div className="container-fluid">
+      <div className="demo-section">
+        <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+          <div className="container">
+            <a className="navbar-brand logo" href="/">
+              <i className="fa-solid fa-ticket" style={{ color: "#74C0FC" }} />
+              <span className="navbar-brand">Ticketing App</span>
+            </a>
 
-      <div className="d-flex justify-content-end">
-        <ul className="nav d-flex align-items-center">{links}</ul>
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav1"
+            >
+              <span className="navbar-toggler-icon"></span>
+            </button>
+
+            <div className="collapse navbar-collapse" id="navbarNav1">
+              <ul className="navbar-nav ms-auto">{links}</ul>
+            </div>
+          </div>
+        </nav>
       </div>
-    </nav>
+    </div>
   );
 };
 export default Header;

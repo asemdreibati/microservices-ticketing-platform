@@ -3,11 +3,24 @@ name: tests-tickets
 on:
   pull_request:
     paths:
-      - 'tickets/**'
+      - "tickets/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Install libssl1.1
+        run: |
+          wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "14"
+          cache: "npm"
+          cache-dependency-path: "tickets/package-lock.json"
+
       - run: cd tickets && npm install && npm run test:ci
