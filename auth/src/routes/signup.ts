@@ -35,6 +35,8 @@ router.post(
       {
         id: user.id,
         email: user.email,
+        twoFactorEnabled: user.twoFactorEnabled,
+        verified: user.verified,
       },
       process.env.JWT_KEY!
     );

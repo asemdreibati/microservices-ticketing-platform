@@ -12,7 +12,14 @@ const SignIn = () => {
       email,
       password,
     },
-    onSuccess: () => Router.push("/"),
+    onSuccess: (res) => {
+      if (res?.requires2FA) {
+        localStorage.setItem("tempToken", res.tempToken);
+        Router.push("/auth/2fa");
+      } else {
+        Router.push("/");
+      }
+    },
   });
 
   const onSubmit = async (event) => {

@@ -5,6 +5,7 @@ import { validateRequest, BadRequestError } from "@aaticketsaa/common";
 
 import { Password } from "../services/password";
 import { User } from "../models/user";
+import { signTemp2FAToken } from "./auth2FA.routes";
 
 const router = express.Router();
 
@@ -23,7 +24,7 @@ router.post(
 
     const existingUser = await User.findOne({ email });
     if (!existingUser || !existingUser.password) {
-      throw new BadRequestError("Invalid credentials");
+      throw new BadRequestError("User Not Found");
     }
 
     const passwordsMatch = await Password.compare(
@@ -33,12 +34,18 @@ router.post(
     if (!passwordsMatch) {
       throw new BadRequestError("Invalid Credentials (passwords don't Match)");
     }
+    if (existingUser.twoFactorEnabled) {
+      const tempToken = signTemp2FAToken(existingUser.id);
+      return res.status(200).send({ requires2FA: true, tempToken });
+    }
 
     // Generate JWT
     const userJwt = jwt.sign(
       {
         id: existingUser.id,
         email: existingUser.email,
+        twoFactorEnabled: existingUser.twoFactorEnabled,
+        verified: existingUser.verified,
       },
       process.env.JWT_KEY!
     );

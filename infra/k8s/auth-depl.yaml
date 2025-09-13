@@ -23,10 +23,18 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: TEMP_2FA_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: temp-2fa-token-secret
+                  key: TEMP_2FA_TOKEN_SECRET
             - name: EMAIL_FROM
               value: "abodaraaali50@gmail.com"
             - name: EMAIL_PASS
-              value: "ghxx hjue tkkj glgj"
+              valueFrom:
+                secretKeyRef:
+                  name: email-pass-secret
+                  key: EMAIL_PASS
             - name: FRONTEND_BASE_URL
               value: "https://ticketing.dev/auth/verification-redirection"
 ---

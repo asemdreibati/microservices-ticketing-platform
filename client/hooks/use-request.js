@@ -15,7 +15,7 @@ const constructUrlWithQueryParams = (url, params) => {
 const useRequest = ({ url, method, body, onSuccess }) => {
   const [errors, setErrors] = useState(null);
 
-  const doRequest = async (props = {}, params = {}) => {
+  const doRequest = async ({ props = {}, params = {} } = {}) => {
     const modifiedUrl = constructUrlWithQueryParams(url, params);
 
     try {

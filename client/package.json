@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^5.0.1",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4",
     "@popperjs/core": "^2.11.8",
     "next": "^10.2.3",
     "react": "^17.0.2",
