@@ -4,7 +4,9 @@ import { User } from "../models/user";
 import { BadRequestError } from "@aaticketsaa/common";
 
 export const generate2FASetup = async (userId: string) => {
-  const user = await User.findOne({ id: userId });
+  console.log(userId, "userIduserId");
+  const user = await User.findOne({ _id: userId });
+  console.log(user, "user");
 
   if (!user) throw new BadRequestError("User not found");
 
@@ -17,19 +19,19 @@ export const generate2FASetup = async (userId: string) => {
   const qrCode = await qrcode.toDataURL(otpauth); // convert otpauth to base64 QR image
 
   await User.updateOne(
-    { id: userId },
+    { _id: userId },
     {
       tempTwoFactorSecret: secret, // not the final field used for login
       twoFactorEnabled: false,
     }
   );
-
   return { qrCode };
 };
 
 export const verify2FASetup = async (userId: string, PIN_token: string) => {
-  const user = await User.findOne({ id: userId });
-  console.log(user, "---------------------------------");
+  const user = await User.findOne({ _id: userId });
+
+  console.log(userId, user, "---------------------------------");
   if (!user?.tempTwoFactorSecret) throw new BadRequestError("2FA not enabled");
 
   const isValid = authenticator.verify({
@@ -70,7 +72,7 @@ export const verify2FALogin = async (userId: string, token: string) => {
 export const disable2FA = async (userId: string) => {
   try {
     await User.updateOne(
-      { id: userId },
+      { _id: userId },
       {
         twoFactorEnabled: false,
         twoFactorSecret: undefined,

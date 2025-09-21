@@ -35,8 +35,30 @@ spec:
                 secretKeyRef:
                   name: email-pass-secret
                   key: EMAIL_PASS
-            - name: FRONTEND_BASE_URL
-              value: "https://ticketing.dev/auth/verification-redirection"
+            - name: MLINKS_VERIFICATION_REDIRECTION
+              value: "https://ticketing.dev/auth/mlinks-verification-redirection"
+            - name: OAUTH_VERIFICATION_REDIRECTION
+              value: "https://ticketing.dev/auth/oauth-verification-redirection"
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: github-client-id
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: github-client-secret
+                  key: GITHUB_CLIENT_SECRET
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-id
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-secret
+                  key: GOOGLE_CLIENT_SECRET
 ---
 apiVersion: v1
 kind: Service

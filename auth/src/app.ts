@@ -10,6 +10,7 @@ import { signoutRouter } from "./routes/signout";
 import { signupRouter } from "./routes/signup";
 import { magicLinkRouter } from "./routes/magic-links-routers";
 import { auth2FA } from "./routes/auth2FA.routes";
+import { oauthRouter } from "./routes/oauth";
 
 const app = express();
 app.set("trust proxy", true);
@@ -27,6 +28,7 @@ app.use(signoutRouter);
 app.use(signupRouter);
 app.use(magicLinkRouter);
 app.use(auth2FA);
+app.use(oauthRouter);
 
 app.all("*", async (req, res) => {
   throw new NotFoundError();

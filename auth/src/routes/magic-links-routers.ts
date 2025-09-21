@@ -12,16 +12,6 @@ import {
   InternalServerError,
 } from "@aaticketsaa/common";
 
-if (!process.env.EMAIL_FROM) {
-  throw new Error("EMAIL_FROM must be defined");
-}
-if (!process.env.EMAIL_PASS) {
-  throw new Error("EMAIL_PASS must be defined");
-}
-if (!process.env.FRONTEND_BASE_URL) {
-  throw new Error("FRONTEND_BASE_URL must be defined");
-}
-
 const MINUTES_OF_EMAIL_EXPIRATION = 1; // expired magicLinks minutes
 
 const router = express.Router();
@@ -32,7 +22,7 @@ const router = express.Router();
 
 const sendMagicLinkEmail = async (email: string, token: string) => {
   // EMAIL CONFIGURATION
-  const magicLinkUrl = `${process.env.FRONTEND_BASE_URL}?token=${token}`;
+  const magicLinkUrl = `${process.env.MLINKS_VERIFICATION_REDIRECTION}?token=${token}`;
   const transporter = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",
@@ -80,7 +70,7 @@ router.post(
 
     if (user && user.verified) {
       throw new DuplicateResourceCreation(
-        "Account already exists and verified"
+        "Account already exists and verified - go to signin with magic links"
       );
     }
 
@@ -142,7 +132,9 @@ router.post(
     const user = await User.findOne({ email });
 
     if (!user || !user.verified) {
-      throw new NotFoundError("No verified account found with this email");
+      throw new NotFoundError(
+        "No verified account found with this email - go to signup with magic links"
+      );
     }
 
     try {
@@ -321,6 +313,6 @@ const cleanupExpiredTokens = async () => {
 };
 
 // Run cleanup every hour
-setInterval(cleanupExpiredTokens, 60 * 60 * 1000);
+// setInterval(cleanupExpiredTokens, 60 * 60 * 1000);
 
 export { router as magicLinkRouter };
