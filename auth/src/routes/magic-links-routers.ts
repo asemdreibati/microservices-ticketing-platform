@@ -11,6 +11,7 @@ import {
   validateRequest,
   InternalServerError,
 } from "@aaticketsaa/common";
+import { signTemp2FAToken } from "./auth2FA.routes";
 
 const MINUTES_OF_EMAIL_EXPIRATION = 1; // expired magicLinks minutes
 
@@ -212,9 +213,15 @@ router.get(
           id: user.id,
           email: user.email,
           verified: true,
+          require2FAAfterMagicLink: user.require2FAAfterMagicLink ?? false,
         },
         process.env.JWT_KEY!
       );
+
+      if (user.require2FAAfterMagicLink) {
+        const tempToken = signTemp2FAToken(user.id);
+        return res.status(200).send({ requires2FA: true, tempToken });
+      }
 
       // Store it on session object
       req.session = {
@@ -313,6 +320,6 @@ const cleanupExpiredTokens = async () => {
 };
 
 // Run cleanup every hour
-// setInterval(cleanupExpiredTokens, 60 * 60 * 1000);
+setInterval(cleanupExpiredTokens, 60 * 60 * 1000);
 
 export { router as magicLinkRouter };

@@ -38,7 +38,7 @@ const Header = ({ currentUser }) => {
           <div className="container">
             <a className="navbar-brand logo" href="/">
               <i className="fa-solid fa-ticket" style={{ color: "#74C0FC" }} />
-              <span className="navbar-brand">Ticketing App</span>
+              &nbsp; <span className="navbar-brand">Ticketing</span>
             </a>
 
             <button

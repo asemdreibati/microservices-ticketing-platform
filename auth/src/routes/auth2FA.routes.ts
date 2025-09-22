@@ -5,6 +5,7 @@ import {
   confirm2FASetup,
   complete2FALogin,
   disable2FAController,
+  manageMagicLinkAfter2fa,
 } from "../controllers/2fa.controller";
 import jwt from "jsonwebtoken";
 import { currentUser, requireAuth } from "@aaticketsaa/common";
@@ -84,5 +85,10 @@ router.post(
   requireAuth,
   disable2FAController
 );
-
+router.post(
+  "/api/users/magic-link-after-2fa",
+  currentUser,
+  requireAuth,
+  manageMagicLinkAfter2fa
+);
 export { router as auth2FA };

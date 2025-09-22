@@ -67,12 +67,7 @@ const SignUp = () => {
         <div className="form-check">
           <span className="d-block mb-2 text-dark">
             verify your email using &nbsp;
-            <a
-              onClick={() => Router.push("/auth/signup-ml")}
-              className="text-decoration-none user-select-auto"
-            >
-              magicLinks
-            </a>
+            <Link href="/auth/signup-ml">magicLinks</Link>
           </span>
         </div>
 

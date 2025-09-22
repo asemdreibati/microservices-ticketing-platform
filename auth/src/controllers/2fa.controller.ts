@@ -50,9 +50,16 @@ export const complete2FALogin = async (req: Request, res: Response) => {
 };
 
 export const disable2FAController = async (req: Request, res: Response) => {
-  const userId = (req as any).userId;
-
+  const userId = (req.currentUser as any).id;
   await twoFactorService.disable2FA(userId);
+  res.json({
+    success: true,
+  });
+};
+export const manageMagicLinkAfter2fa = async (req: Request, res: Response) => {
+  const { enabled } = req.body;
+  const userId = (req.currentUser as any).id;
+  await twoFactorService.manageMagicLinkAfter2fa(userId, enabled);
   res.json({
     success: true,
   });

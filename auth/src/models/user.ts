@@ -13,6 +13,7 @@ interface UserAttrs {
   tempTwoFactorSecret?: string;
   twoFactorSecret?: string;
   twoFactorEnabled?: boolean;
+  require2FAAfterMagicLink?: boolean;
 }
 
 // An interface that describes the properties
@@ -34,6 +35,7 @@ interface UserDoc extends mongoose.Document {
   tempTwoFactorSecret?: string;
   twoFactorSecret?: string;
   twoFactorEnabled?: boolean;
+  require2FAAfterMagicLink?: boolean;
 }
 
 const userSchema = new mongoose.Schema(
@@ -71,6 +73,10 @@ const userSchema = new mongoose.Schema(
       required: false,
     },
     twoFactorEnabled: {
+      type: Boolean,
+      required: false,
+    },
+    require2FAAfterMagicLink: {
       type: Boolean,
       required: false,
     },

@@ -84,13 +84,8 @@ const SignIn = () => {
         </div>
 
         <span className="d-block mb-2 text-dark">
-          if you verified you email account you can signin using
-          <a
-            onClick={() => Router.push("/auth/signin-ml")}
-            className="text-decoration-none user-select-auto"
-          >
-            magicLinks
-          </a>
+          if you verified you email account you can signin using &nbsp;
+          <Link href="/auth/signin-ml">magicLinks</Link>
         </span>
 
         <button type="submit" className="btn btn-login text-white">

@@ -28,7 +28,7 @@ const SignUpML = () => {
   return (
     <>
       <div className="text-center">
-        <h1 className="card-title h3">Sign in</h1>
+        <h1 className="card-title h3">Sign Up</h1>
         <p className="card-text text-muted">
           Sign Up with Magic Links below to access your account
         </p>

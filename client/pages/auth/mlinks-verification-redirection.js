@@ -9,7 +9,14 @@ const VerificationRedirection = () => {
   const { doRequest, errors } = useRequest({
     url: "/api/users/verify-magic-links",
     method: "get",
-    onSuccess: () => Router.push("/"),
+    onSuccess: (res) => {
+      if (res?.requires2FA) {
+        localStorage.setItem("tempToken", res.tempToken);
+        Router.push("/auth/2fa");
+      } else {
+        Router.push("/");
+      }
+    },
   });
 
   useEffect(() => {

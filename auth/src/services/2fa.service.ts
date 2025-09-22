@@ -84,3 +84,20 @@ export const disable2FA = async (userId: string) => {
     throw new BadRequestError("Failed disabling 2FA");
   }
 };
+export const manageMagicLinkAfter2fa = async (
+  userId: string,
+  enabled: boolean
+) => {
+  try {
+    await User.updateOne(
+      { _id: userId },
+      {
+        require2FAAfterMagicLink: enabled,
+      }
+    );
+
+    return true;
+  } catch (e) {
+    throw new BadRequestError("Failed disabling 2FA");
+  }
+};
