@@ -37,7 +37,7 @@ const VerificationRedirection = () => {
     };
 
     verifyToken();
-  }, [query.token]); // Add dependency on query.token
+  }, [query.token]);
 
   return (
     <section className="container mx-auto px-4 md:px-6 flex flex-col justify-center items-center h-screen">

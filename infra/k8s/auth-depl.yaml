@@ -28,6 +28,12 @@ spec:
                 secretKeyRef:
                   name: temp-2fa-token-secret
                   key: TEMP_2FA_TOKEN_SECRET
+            - name: EMAIL_SERVICE
+              value: "gmail"
+            - name: EMAIL_HOST
+              value: "smtp.gmail.com"
+            - name: EMAIL_PORT
+              value: "465"
             - name: EMAIL_FROM
               value: "abodaraaali50@gmail.com"
             - name: EMAIL_PASS
@@ -39,6 +45,8 @@ spec:
               value: "https://ticketing.dev/auth/mlinks-verification-redirection"
             - name: OAUTH_VERIFICATION_REDIRECTION
               value: "https://ticketing.dev/auth/oauth-verification-redirection"
+            - name: RESET_PASSWORD_REDIRECTION
+              value: "https://ticketing.dev/auth/reset-password"
             - name: GITHUB_CLIENT_ID
               valueFrom:
                 secretKeyRef:

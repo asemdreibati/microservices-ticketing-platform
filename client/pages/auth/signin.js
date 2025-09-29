@@ -78,9 +78,7 @@ const SignIn = () => {
               Remember me
             </label>
           </div>
-          <a href="#" className="text-decoration-none">
-            Forgot password?
-          </a>
+          <Link href="/auth/forget-password">forgot your password?</Link>
         </div>
 
         <span className="d-block mb-2 text-dark">

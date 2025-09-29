@@ -14,6 +14,8 @@ interface UserAttrs {
   twoFactorSecret?: string;
   twoFactorEnabled?: boolean;
   require2FAAfterMagicLink?: boolean;
+  resetToken?: string;
+  resetTokenExp?: Date;
 }
 
 // An interface that describes the properties
@@ -36,6 +38,9 @@ interface UserDoc extends mongoose.Document {
   twoFactorSecret?: string;
   twoFactorEnabled?: boolean;
   require2FAAfterMagicLink?: boolean;
+
+  resetToken?: string;
+  resetTokenExp?: Date;
 }
 
 const userSchema = new mongoose.Schema(
@@ -78,6 +83,14 @@ const userSchema = new mongoose.Schema(
     },
     require2FAAfterMagicLink: {
       type: Boolean,
+      required: false,
+    },
+    resetToken: {
+      type: String,
+      required: false,
+    },
+    resetTokenExp: {
+      type: Date,
       required: false,
     },
   },
