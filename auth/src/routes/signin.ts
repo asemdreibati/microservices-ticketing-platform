@@ -5,6 +5,7 @@ import { validateRequest, BadRequestError } from "@aaticketsaa/common";
 
 import { Password } from "../services/password";
 import { User } from "../models/user";
+import { signTemp2FAToken } from "./auth2FA.routes";
 
 const router = express.Router();
 
@@ -22,16 +23,30 @@ router.post(
     const { email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
+    if (!existingUser?.password) {
+      throw new BadRequestError(
+        "you can access your account using magic links only- enter your credentails (email/password) to access using them"
+      );
+    }
     if (!existingUser) {
-      throw new BadRequestError("Invalid credentials");
+      throw new BadRequestError("User Not Found");
     }
 
-    const passwordsMatch = await Password.compare(
-      existingUser.password,
-      password
-    );
-    if (!passwordsMatch) {
-      throw new BadRequestError("Invalid Credentials");
+    if (existingUser.password) {
+      const passwordsMatch = await Password.compare(
+        existingUser.password,
+        password
+      );
+      if (!passwordsMatch) {
+        throw new BadRequestError(
+          "Invalid Credentials (passwords don't Match)"
+        );
+      }
+    }
+
+    if (existingUser.twoFactorEnabled) {
+      const tempToken = signTemp2FAToken(existingUser.id);
+      return res.status(200).send({ requires2FA: true, tempToken });
     }
 
     // Generate JWT
@@ -39,6 +54,8 @@ router.post(
       {
         id: existingUser.id,
         email: existingUser.email,
+        twoFactorEnabled: existingUser.twoFactorEnabled,
+        verified: existingUser.verified,
       },
       process.env.JWT_KEY!
     );

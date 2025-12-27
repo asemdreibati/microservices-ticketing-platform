@@ -23,6 +23,50 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: TEMP_2FA_TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: temp-2fa-token-secret
+                  key: TEMP_2FA_TOKEN_SECRET
+            - name: EMAIL_SERVICE
+              value: "gmail"
+            - name: EMAIL_HOST
+              value: "smtp.gmail.com"
+            - name: EMAIL_PORT
+              value: "465"
+            - name: EMAIL_FROM
+              value: "abodaraaali50@gmail.com"
+            - name: EMAIL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: email-pass-secret
+                  key: EMAIL_PASS
+            - name: MLINKS_VERIFICATION_REDIRECTION
+              value: "https://ticketing.dev/auth/mlinks-verification-redirection"
+            - name: OAUTH_VERIFICATION_REDIRECTION
+              value: "https://ticketing.dev/auth/oauth-verification-redirection"
+            - name: RESET_PASSWORD_REDIRECTION
+              value: "https://ticketing.dev/auth/reset-password"
+            - name: GITHUB_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: github-client-id
+                  key: GITHUB_CLIENT_ID
+            - name: GITHUB_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: github-client-secret
+                  key: GITHUB_CLIENT_SECRET
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-id
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google-client-secret
+                  key: GOOGLE_CLIENT_SECRET
 ---
 apiVersion: v1
 kind: Service

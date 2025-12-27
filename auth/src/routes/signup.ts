@@ -20,13 +20,14 @@ router.post(
   async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
-    const existingUser = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
-    if (existingUser) {
-      throw new BadRequestError("Email in use");
-    }
+    if (user) {
+      if (user.password) throw new BadRequestError("Email in use");
+      user.password = password;
+    } else user = User.build({ email, password });
 
-    const user = User.build({ email, password });
+    user.verified = true;
     await user.save();
 
     // Generate JWT
@@ -34,6 +35,8 @@ router.post(
       {
         id: user.id,
         email: user.email,
+        twoFactorEnabled: user.twoFactorEnabled,
+        verified: user.verified,
       },
       process.env.JWT_KEY!
     );
